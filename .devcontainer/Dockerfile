@@ -15,6 +15,6 @@ ENV PATH="/usr/local/bin/node-v14.15.1-linux-x64/bin:${PATH}"
 # set up a new folder for npm to install globally on a dev container without root access
 # https://stackoverflow.com/questions/46058546/error-eacces-permission-denied-access-usr-lib-node-modules/49122289
 
-# RUN npm install -g truffle --unsafe-perm
+RUN npm install -g truffle --unsafe-perm
 
-# RUN npm install -g ganache-cli --unsafe-perm
+RUN npm install -g ganache-cli --unsafe-perm
