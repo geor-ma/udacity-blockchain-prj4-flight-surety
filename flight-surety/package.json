@@ -1,0 +1,18 @@
+{
+  "name": "flight-surety",
+  "version": "1.0.0",
+  "description": "my udacity blockchain flight surety project",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mg",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
+    "truffle-hdwallet-provider": "^1.0.17"
+  }
+}
