@@ -5,10 +5,8 @@ pragma solidity >=0.4.21 <0.7.0;
 // OpenZeppelin's SafeMath library, when used correctly, protects agains such bugs
 // More info: https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2018/november/smart-contract-insecurity-bad-arithmetic/
 
-//import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-
-//import "github.com/OpenZeppelin/openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+//import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /************************************************** */
 /* FlightSurety Smart Contract                      */
@@ -120,7 +118,7 @@ contract FlightSuretyApp {
     // Generate a request for oracles to fetch flight information
     function fetchFlightStatus(
         address airline,
-        string flight,
+        string calldata flight,
         uint256 timestamp
     ) external {
         uint8 index = getRandomIndex(msg.sender);
@@ -204,7 +202,7 @@ contract FlightSuretyApp {
         oracles[msg.sender] = Oracle({isRegistered: true, indexes: indexes});
     }
 
-    function getMyIndexes() external view returns (uint8[3]) {
+    function getMyIndexes() external view returns (uint8[3] memory) {
         require(
             oracles[msg.sender].isRegistered,
             "Not registered as an oracle"
@@ -220,7 +218,7 @@ contract FlightSuretyApp {
     function submitOracleResponse(
         uint8 index,
         address airline,
-        string flight,
+        string calldata flight,
         uint256 timestamp,
         uint8 statusCode
     ) external {
@@ -256,14 +254,14 @@ contract FlightSuretyApp {
 
     function getFlightKey(
         address airline,
-        string flight,
+        string memory flight,
         uint256 timestamp
     ) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(airline, flight, timestamp));
     }
 
     // Returns array of three non-duplicating integers from 0-9
-    function generateIndexes(address account) internal returns (uint8[3]) {
+    function generateIndexes(address account) internal returns (uint8[3] memory) {
         uint8[3] memory indexes;
         indexes[0] = getRandomIndex(account);
 

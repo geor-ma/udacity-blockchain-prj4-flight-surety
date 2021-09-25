@@ -18,3 +18,7 @@ ENV PATH="/usr/local/bin/node-v14.15.1-linux-x64/bin:${PATH}"
 RUN npm install -g truffle --unsafe-perm
 
 RUN npm install -g ganache-cli --unsafe-perm
+
+# RUN npm install --save  openzeppelin-solidity@2.3
+# RUN npm install --save  truffle-hdwallet-provider@1.0.17
+# RUN npm audit fix
