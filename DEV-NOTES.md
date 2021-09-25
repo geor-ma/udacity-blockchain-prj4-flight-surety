@@ -30,3 +30,10 @@ Node v14.15.1
 Web3.js v1.5.2
 
 ```
+
+```bash
+# Install bignumber js
+
+$ npm install bignumber.js@8.0.2
+
+```
