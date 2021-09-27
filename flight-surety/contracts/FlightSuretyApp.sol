@@ -71,11 +71,11 @@ contract FlightSuretyApp {
 
     /**
      * @dev Contract constructor
-     *
+     * 
      */
-    constructor(address _flightSuretyDataContract) public {
+    constructor(address flightSuretyDataContractAddress) public {
         contractOwner = msg.sender;
-        flightSuretyData = FlightSuretyData(_flightSuretyDataContract);
+        flightSuretyData = FlightSuretyData(flightSuretyDataContractAddress);
     }
 
     /********************************************************************************************/
@@ -83,7 +83,7 @@ contract FlightSuretyApp {
     /********************************************************************************************/
 
     function isOperational() public returns (bool) {
-        return true; //return flightSuretyData.isOperational();
+        return flightSuretyData.isOperational();
     }
 
     /********************************************************************************************/
@@ -315,7 +315,6 @@ contract FlightSuretyApp {
 
 
 contract FlightSuretyData {
-    function isOperational() public returns(bool) ;
-
+    function isOperational() public view returns(bool);
     function registerAirline (address _addressAirline) external;
 }

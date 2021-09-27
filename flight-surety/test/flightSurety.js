@@ -79,7 +79,7 @@ contract("Flight Surety Tests", async (accounts) => {
     assert.equal(
       result,
       false,
-      "Airline should not be able to register another airline if it hasn't provided funding"
+      "Only existing airline may register a new airline until there are at least four airlines registered"
     );
   });
 

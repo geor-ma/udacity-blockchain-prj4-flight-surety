@@ -14,7 +14,7 @@ contract FlightSuretyData {
     address private contractOwner; // Account used to deploy contract
     bool private operational = true; // Blocks all state changes throughout the contract if false
 
-    mapping(address => uint256) private authorized;
+    mapping(address => bool) private authorizedAppContracts;
 
     struct Airline {
         
@@ -33,10 +33,14 @@ contract FlightSuretyData {
      * @dev Constructor
      *      The deploying account becomes contractOwner
      */
-    constructor(address firstAirline) public {
+    // constructor(address firstAirline) public {
+    //     contractOwner = msg.sender;
+    //     _registerAirline(firstAirline);
+    //     airlines[firstAirline].isFunded = true;
+    // }
+
+    constructor() public {
         contractOwner = msg.sender;
-        _registerAirline(firstAirline);
-        airlines[firstAirline].isFunded = true;
     }
 
     /********************************************************************************************/
@@ -92,7 +96,11 @@ contract FlightSuretyData {
 
     // manage authorization
     function authorizeCaller(address _address) external requireContractOwner {
-        authorized[_address] = 1;
+        authorizedAppContracts[_address] = true;
+    }
+
+    function deauthorizeCaller(address _address) external requireContractOwner {
+        delete authorizedAppContracts[_address];
     }
 
     /**
