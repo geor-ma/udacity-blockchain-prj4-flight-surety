@@ -36,6 +36,9 @@ contract FlightSuretyApp {
     }
     mapping(bytes32 => Flight) private flights;
 
+    FlightSuretyData flightSuretyData;
+    
+
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
@@ -70,16 +73,17 @@ contract FlightSuretyApp {
      * @dev Contract constructor
      *
      */
-    constructor() public {
+    constructor(address _flightSuretyDataContract) public {
         contractOwner = msg.sender;
+        flightSuretyData = FlightSuretyData(_flightSuretyDataContract);
     }
 
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
 
-    function isOperational() public pure returns (bool) {
-        return true; // Modify to call data contract's status
+    function isOperational() public returns (bool) {
+        return true; //return flightSuretyData.isOperational();
     }
 
     /********************************************************************************************/
@@ -90,12 +94,20 @@ contract FlightSuretyApp {
      * @dev Add an airline to the registration queue
      *
      */
-    function registerAirline()
+    function registerAirline(address _newAirlineAddress)
         external
-        pure
         returns (bool success, uint256 votes)
     {
-        return (success, 0);
+        success = false;
+        votes = 0;
+
+        //TODO: Only existing airline may register a new airline until there are at least four airlines registered
+        
+        // check for number of airlines
+        //if(airlines.)
+        
+        
+        return (success, votes);
     }
 
     /**
@@ -299,4 +311,11 @@ contract FlightSuretyApp {
     }
 
     // endregion
+}
+
+
+contract FlightSuretyData {
+    function isOperational() public returns(bool) ;
+
+    function registerAirline (address _addressAirline) external;
 }

@@ -16,6 +16,15 @@ contract FlightSuretyData {
 
     mapping(address => uint256) private authorized;
 
+    struct Airline {
+        
+        address airlineAddress;
+        bool isFunded;
+    }
+
+    mapping(address => Airline) private airlines;
+    uint airlinesCount = 0;
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -24,8 +33,10 @@ contract FlightSuretyData {
      * @dev Constructor
      *      The deploying account becomes contractOwner
      */
-    constructor() public {
+    constructor(address firstAirline) public {
         contractOwner = msg.sender;
+        _registerAirline(firstAirline);
+        airlines[firstAirline].isFunded = true;
     }
 
     /********************************************************************************************/
@@ -89,7 +100,15 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline() external pure {}
+    function registerAirline(address _airlineAddress) external {
+        _registerAirline(_airlineAddress);
+    }
+
+    function _registerAirline(address _airlineAddress) internal {
+        airlinesCount = airlinesCount.add(1);
+        airlines[_airlineAddress].airlineAddress = _airlineAddress;
+        airlines[_airlineAddress].isFunded = false;
+    }
 
     /**
      * @dev Buy insurance for a flight
