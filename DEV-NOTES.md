@@ -37,3 +37,7 @@ Web3.js v1.5.2
 $ npm install bignumber.js@8.0.2
 
 ```
+
+### Truffle migrate/deploy with additional parameters
+
+- [Truffle Migrations Explained](https://www.sitepoint.com/truffle-migrations-explained/)

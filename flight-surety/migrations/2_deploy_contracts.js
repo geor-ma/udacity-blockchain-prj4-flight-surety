@@ -4,12 +4,15 @@ const FlightSuretyApp = artifacts.require("FlightSuretyApp");
 const FlightSuretyData = artifacts.require("FlightSuretyData");
 const fs = require("fs");
 
-module.exports = function (deployer) {
+// https://www.sitepoint.com/truffle-migrations-explained/
+module.exports = function (deployer, network, accounts) {
+  let firstAirline = accounts[1];
+
   deployer.deploy(ConvertLib);
   deployer.link(ConvertLib, MetaCoin);
   deployer.deploy(MetaCoin);
 
-  deployer.deploy(FlightSuretyData).then(() => {
+  deployer.deploy(FlightSuretyData, firstAirline).then(() => {
     return deployer
       .deploy(FlightSuretyApp, FlightSuretyData.address)
       .then(() => {

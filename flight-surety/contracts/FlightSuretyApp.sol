@@ -82,7 +82,7 @@ contract FlightSuretyApp {
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
 
-    function isOperational() public returns (bool) {
+    function isOperational() public view returns (bool) {
         return flightSuretyData.isOperational();
     }
 
