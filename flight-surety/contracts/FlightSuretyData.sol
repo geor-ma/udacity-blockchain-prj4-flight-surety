@@ -14,10 +14,9 @@ contract FlightSuretyData {
     address private contractOwner; // Account used to deploy contract
     bool private operational = true; // Blocks all state changes throughout the contract if false
 
-    mapping(address => bool) private authorizedAppContracts;
+    address[] private authorizedAppContracts;
 
-    struct Airline {
-        
+    struct Airline {   
         address airlineAddress;
         bool isFunded;
     }
@@ -33,15 +32,10 @@ contract FlightSuretyData {
      * @dev Constructor
      *      The deploying account becomes contractOwner
      */
-    // constructor(address firstAirline) public {
-    //     contractOwner = msg.sender;
-    //     _registerAirline(firstAirline);
-    //     airlines[firstAirline].isFunded = true;
-    // }
-
     constructor(address firstAirline) public {
         contractOwner = msg.sender;
         _registerAirline(firstAirline);
+        airlines[firstAirline].isFunded = true;
     }
 
     /********************************************************************************************/
@@ -69,6 +63,43 @@ contract FlightSuretyData {
         _;
     }
 
+    /**
+     * @dev Modifier that requires the an Authorized AppContract account to be the function caller
+     */
+    modifier requireAuthorizedAppContracts() {
+        bool isAuthorizedAppContract = false;
+
+        //loop through authorized app contracts to find if caller is authorized
+        for (uint i=0; i < authorizedAppContracts.length; i++){
+            if(authorizedAppContracts[i] == msg.sender){
+                isAuthorizedAppContract = true;
+                break;
+            }
+        }
+
+        require(isAuthorizedAppContract, "Caller is not an authorized app.");
+        _;
+    }
+
+    /**
+     * @dev Modifier that requires - If airlines count < 5, only existing airlines can register new airline
+     */
+    modifier requireCanRegisterAirline() {
+        bool canRegister = false;
+
+        //If airlines count < 5, only existing airlines can register new airline
+        if( airlinesCount < 5) {
+            if(airlines[msg.sender].airlineAddress == msg.sender ){
+                canRegister = true;
+            }
+        }
+
+        require(canRegister, "Caller cannot register new airline.");
+        _;
+    }
+    
+
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -95,21 +126,22 @@ contract FlightSuretyData {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
-    // manage authorization
+    // manage authorization - add to authorizedAppContracts
     function authorizeCaller(address _address) external requireContractOwner {
-        authorizedAppContracts[_address] = true;
+        authorizedAppContracts.push(_address);
     }
 
-    function deauthorizeCaller(address _address) external requireContractOwner {
-        delete authorizedAppContracts[_address];
-    }
+    // manage authorization - remove authorizedAppContracts
+    // function deauthorizeCaller(address _address) external requireContractOwner {
+    //     // TODO: de authorize 
+    // }
 
     /**
      * @dev Add an airline to the registration queue
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline(address _airlineAddress) external {
+    function registerAirline(address _airlineAddress) external requireAuthorizedAppContracts requireCanRegisterAirline {
         _registerAirline(_airlineAddress);
     }
 
