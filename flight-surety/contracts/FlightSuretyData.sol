@@ -84,14 +84,17 @@ contract FlightSuretyData {
     /**
      * @dev Modifier that requires - If airlines count < 5, only existing airlines can register new airline
      */
-    modifier requireCanRegisterAirline() {
+    modifier requireCanRegisterAirline(address nominatingAirline) {
         bool canRegister = false;
 
         //If airlines count < 5, only existing airlines can register new airline
         if( airlinesCount < 5) {
-            if(airlines[msg.sender].airlineAddress == msg.sender ){
+            if(airlines[nominatingAirline].airlineAddress == nominatingAirline ){
                 canRegister = true;
             }
+        }
+        else{
+            canRegister = true;
         }
 
         require(canRegister, "Caller cannot register new airline.");
@@ -141,7 +144,7 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline(address _airlineAddress) external requireAuthorizedAppContracts requireCanRegisterAirline {
+    function registerAirline(address _airlineAddress, address _nominatingAirline) external requireAuthorizedAppContracts requireCanRegisterAirline(_nominatingAirline) {
         _registerAirline(_airlineAddress);
     }
 

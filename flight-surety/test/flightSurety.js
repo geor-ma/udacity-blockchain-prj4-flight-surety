@@ -66,19 +66,22 @@ contract("Flight Surety Tests", async (accounts) => {
   it("Only existing airline may register a new airline until there are at least four airlines registered", async () => {
     // ARRANGE
     let newAirline = accounts[2];
+    let isRegistered = true;
 
     // ACT
     try {
       await config.flightSuretyApp.registerAirline(newAirline, {
         from: config.firstAirline,
       });
-    } catch (e) {}
-    let result = await config.flightSuretyData.isAirline.call(newAirline);
+    } catch (e) {
+      // assumption: if no error in registering, assuming it is registerd sucessfully.
+      isRegistered = false;
+    }
 
     // ASSERT
     assert.equal(
-      result,
-      false,
+      isRegistered,
+      true,
       "Only existing airline may register a new airline until there are at least four airlines registered"
     );
   });

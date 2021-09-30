@@ -96,18 +96,10 @@ contract FlightSuretyApp {
      */
     function registerAirline(address _newAirlineAddress)
         external
-        returns (bool success, uint256 votes)
+        returns (bool success)
     {
-        success = false;
-        votes = 0;
-
-        //TODO: Only existing airline may register a new airline until there are at least four airlines registered
-        
-        // check for number of airlines
-        //if(airlines.)
-        
-        
-        return (success, votes);
+        flightSuretyData.registerAirline(_newAirlineAddress, msg.sender);
+        return true;
     }
 
     /**
@@ -316,5 +308,5 @@ contract FlightSuretyApp {
 
 contract FlightSuretyData {
     function isOperational() public view returns(bool);
-    function registerAirline (address _addressAirline) external;
+    function registerAirline (address _addressAirline, address _nominatingAirline) external ;
 }
