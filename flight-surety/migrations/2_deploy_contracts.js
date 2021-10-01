@@ -1,5 +1,3 @@
-const ConvertLib = artifacts.require("ConvertLib");
-const MetaCoin = artifacts.require("MetaCoin");
 const FlightSuretyApp = artifacts.require("FlightSuretyApp");
 const FlightSuretyData = artifacts.require("FlightSuretyData");
 const fs = require("fs");
@@ -7,10 +5,6 @@ const fs = require("fs");
 // https://www.sitepoint.com/truffle-migrations-explained/
 module.exports = function (deployer, network, accounts) {
   let firstAirline = accounts[1];
-
-  deployer.deploy(ConvertLib);
-  deployer.link(ConvertLib, MetaCoin);
-  deployer.deploy(MetaCoin);
 
   deployer.deploy(FlightSuretyData, firstAirline).then(() => {
     return deployer
