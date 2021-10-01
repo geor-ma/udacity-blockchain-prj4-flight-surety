@@ -236,4 +236,27 @@ contract("Flight Surety Tests", async (accounts) => {
       "Passengers should be able to choose from a fixed list of flight numbers and departure"
     );
   });
+  it("Passengers may purchase flight insurance", async () => {
+    let insurancePurchased = true;
+
+    try {
+      //register a flight
+      await config.flightSuretyApp.registerFlight(100, {
+        from: config.firstAirline,
+      });
+
+      // purchase insurance for the flight registered above
+      await config.flightSuretyApp.buy(100, 1, {
+        from: accounts[8],
+      });
+    } catch (error) {
+      insurancePurchased = false;
+    }
+
+    assert.equal(
+      insurancePurchased,
+      true,
+      "Passengers may purchase flight insurance"
+    );
+  });
 });

@@ -100,6 +100,9 @@ contract FlightSuretyApp {
     function getFlights() external view returns (uint8[] memory){
         return flightSuretyData.getFlights();
     }
+    function buy(uint8 _flightNumber, uint8 _insuranceAmount) external payable {
+        flightSuretyData.buy(msg.sender, _flightNumber, _insuranceAmount);
+    }
 
     /**
      * @dev Called after oracle has updated flight status
@@ -305,4 +308,5 @@ contract FlightSuretyData {
     function approveAirlineRegistration(address _airlineToRegister, address _approvingAirline) external;
     function registerFlight(uint8 _flightNumber, address _airlineAddress) external;
     function getFlights() external view returns (uint8[] memory);
+    function buy(address _passengerAccountNumber, uint8 _flightNumber, uint8 _insuranceAmount) external payable;
 }

@@ -16,6 +16,14 @@ contract FlightSuretyData {
 
     address[] private authorizedAppContracts;
 
+    struct Passenger {
+        address passengerAccountAddress;
+        uint8 flightNumber;
+        uint8 purchasedInsuranceAmount;
+    }
+
+    mapping(address => Passenger) private passengers;
+
     struct Airline {   
         address airlineAddress;
         bool isFunded;
@@ -207,7 +215,11 @@ contract FlightSuretyData {
      * @dev Buy insurance for a flight
      *
      */
-    function buy() external payable {}
+    function buy(address _passengerAccountNumber, uint8 _flightNumber, uint8 _insuranceAmount) external requireAuthorizedAppContracts payable {
+        passengers[_passengerAccountNumber].passengerAccountAddress = _passengerAccountNumber;
+        passengers[_passengerAccountNumber].flightNumber = _flightNumber;
+        passengers[_passengerAccountNumber].purchasedInsuranceAmount = _insuranceAmount;
+    }
 
     /**
      *  @dev Credits payouts to insurees
