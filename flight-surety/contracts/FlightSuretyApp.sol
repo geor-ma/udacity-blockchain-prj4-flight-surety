@@ -18,23 +18,11 @@ contract FlightSuretyApp {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
-    // Flight status codees
-    uint8 private constant STATUS_CODE_UNKNOWN = 0;
-    uint8 private constant STATUS_CODE_ON_TIME = 10;
-    uint8 private constant STATUS_CODE_LATE_AIRLINE = 20;
-    uint8 private constant STATUS_CODE_LATE_WEATHER = 30;
-    uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
-    uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
     address private contractOwner; // Account used to deploy contract
 
-    struct Flight {
-        bool isRegistered;
-        uint8 statusCode;
-        uint256 updatedTimestamp;
-        address airline;
-    }
-    mapping(bytes32 => Flight) private flights;
+    FlightSuretyData flightSuretyData;
+    
 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -68,18 +56,19 @@ contract FlightSuretyApp {
 
     /**
      * @dev Contract constructor
-     *
+     * 
      */
-    constructor() public {
+    constructor(address flightSuretyDataContractAddress) public {
         contractOwner = msg.sender;
+        flightSuretyData = FlightSuretyData(flightSuretyDataContractAddress);
     }
 
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
 
-    function isOperational() public pure returns (bool) {
-        return true; // Modify to call data contract's status
+    function isOperational() public view returns (bool) {
+        return flightSuretyData.isOperational();
     }
 
     /********************************************************************************************/
@@ -90,19 +79,38 @@ contract FlightSuretyApp {
      * @dev Add an airline to the registration queue
      *
      */
-    function registerAirline()
+    function registerAirline(address _newAirlineAddress)
         external
-        pure
-        returns (bool success, uint256 votes)
     {
-        return (success, 0);
+        flightSuretyData.registerAirline(_newAirlineAddress, msg.sender);
+    }
+
+    function approveAirlineRegistration(address _airlineToRegister) external{
+        flightSuretyData.approveAirlineRegistration(_airlineToRegister, msg.sender);
     }
 
     /**
      * @dev Register a future flight for insuring.
      *
      */
-    function registerFlight() external pure {}
+    function registerFlight(uint8 _flightNumber) external {
+        flightSuretyData.registerFlight(_flightNumber, msg.sender);
+    }
+
+    function getFlights() external view returns (uint8[] memory){
+        return flightSuretyData.getFlights();
+    }
+    function buy(uint8 _flightNumber, uint _insuranceAmount) external payable {
+        flightSuretyData.buy(msg.sender, _flightNumber, _insuranceAmount);
+    }
+
+    function creditInsurees() external {
+        flightSuretyData.creditInsurees(msg.sender);
+    }
+
+    function pay(address _passengerAddress) external payable{
+        flightSuretyData.pay(_passengerAddress);
+    }
 
     /**
      * @dev Called after oracle has updated flight status
@@ -299,4 +307,16 @@ contract FlightSuretyApp {
     }
 
     // endregion
+}
+
+
+contract FlightSuretyData {
+    function isOperational() public view returns(bool);
+    function registerAirline (address _addressAirline, address _nominatingAirline) external ;
+    function approveAirlineRegistration(address _airlineToRegister, address _approvingAirline) external;
+    function registerFlight(uint8 _flightNumber, address _airlineAddress) external;
+    function getFlights() external view returns (uint8[] memory);
+    function buy(address _passengerAccountNumber, uint8 _flightNumber, uint _insuranceAmount) external payable;
+    function creditInsurees(address _passengerAccountNumber) external ;
+    function pay(address _passengerAddress) external payable;
 }
