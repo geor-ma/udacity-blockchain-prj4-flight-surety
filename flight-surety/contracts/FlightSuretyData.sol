@@ -147,6 +147,7 @@ contract FlightSuretyData {
      *
      */
     function registerAirline(address _airlineToRegister, address _nominatingAirline) external requireAuthorizedAppContracts requireCanRegisterAirline(_nominatingAirline) {
+        require(airlines[_nominatingAirline].isFunded == true, "nominating airline needs to be funded to register other airline." );
         _registerAirline(_airlineToRegister);
     }
 

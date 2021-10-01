@@ -144,21 +144,46 @@ contract("Flight Surety Tests", async (accounts) => {
     );
   });
 
-  it("(airline) cannot register an Airline using registerAirline() if it is not funded", async () => {
+  it("(airline) CAN register an Airline using registerAirline() if it is funded", async () => {
     // ARRANGE
     let newAirline = accounts[2];
+    let isRegistered = true;
 
     // ACT
     try {
       await config.flightSuretyApp.registerAirline(newAirline, {
         from: config.firstAirline,
       });
-    } catch (e) {}
-    let result = await config.flightSuretyData.isAirline.call(newAirline);
+    } catch (e) {
+      // error will be thrown if conditions of registration does not meet. So, if no error in registering, it is safe to assume that registration is sucessful.
+      isRegistered = false;
+    }
 
     // ASSERT
     assert.equal(
-      result,
+      isRegistered,
+      true,
+      "Airline CAN register another airline if it is funded."
+    );
+  });
+  it("(airline) cannot register an Airline using registerAirline() if it is not funded", async () => {
+    // ARRANGE
+    let newAirline = accounts[2];
+    let isRegistered = false;
+
+    // ACT
+    try {
+      await config.flightSuretyApp.registerAirline(newAirline, {
+        from: config.accounts[3],
+      });
+    } catch (e) {
+      // error will be thrown if conditions of registration does not meet. So, if no error in registering, it is safe to assume that registration is sucessful.
+      isRegistered = false;
+    }
+
+    // ASSERT
+    assert.equal(
+      isRegistered,
       false,
       "Airline should not be able to register another airline if it hasn't provided funding"
     );
