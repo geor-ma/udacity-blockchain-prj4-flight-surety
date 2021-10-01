@@ -164,11 +164,6 @@ contract FlightSuretyData {
         authorizedAppContracts.push(_address);
     }
 
-    // manage authorization - remove authorizedAppContracts
-    // function deauthorizeCaller(address _address) external requireContractOwner {
-    //     // TODO: de authorize 
-    // }
-
     /**
      * @dev Add an airline to the registration queue
      *      Can only be called from FlightSuretyApp contract
@@ -232,17 +227,21 @@ contract FlightSuretyData {
     //     uint x = uint(1) * uint(1.5);
     // }
 
-    function creditInsurees(address _passengerAccountNumber) external requireAuthorizedAppContracts {
+    function creditInsurees(address _passengerAddress) external requireAuthorizedAppContracts {
         //set the credit amount to 1.5 times of purchased insurance amount
-        uint insuranceAmount = passengers[_passengerAccountNumber].purchasedInsuranceAmount.mul(uint(150)).div(uint(100));
-        passengers[_passengerAccountNumber].creditedInsuranceAmount = insuranceAmount;
+        uint insuranceAmount = passengers[_passengerAddress].purchasedInsuranceAmount.mul(uint(150)).div(uint(100));
+        passengers[_passengerAddress].creditedInsuranceAmount = insuranceAmount;
     }
 
     /**
      *  @dev Transfers eligible payout funds to insuree
      *
      */
-    function pay() external pure {}
+    function pay(address payable _passengerAddress) external payable requireAuthorizedAppContracts {
+        uint paymentAmount = passengers[_passengerAddress].creditedInsuranceAmount;
+        passengers[_passengerAddress].creditedInsuranceAmount = 0;
+        _passengerAddress.transfer(paymentAmount);
+    }
 
     /**
      * @dev Initial funding for the insurance. Unless there are too many delayed flights

@@ -108,6 +108,10 @@ contract FlightSuretyApp {
         flightSuretyData.creditInsurees(msg.sender);
     }
 
+    function pay(address _passengerAddress) external payable{
+        flightSuretyData.pay(_passengerAddress);
+    }
+
     /**
      * @dev Called after oracle has updated flight status
      *
@@ -314,4 +318,5 @@ contract FlightSuretyData {
     function getFlights() external view returns (uint8[] memory);
     function buy(address _passengerAccountNumber, uint8 _flightNumber, uint _insuranceAmount) external payable;
     function creditInsurees(address _passengerAccountNumber) external ;
+    function pay(address _passengerAddress) external payable;
 }
