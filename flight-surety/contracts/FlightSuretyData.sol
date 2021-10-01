@@ -216,6 +216,8 @@ contract FlightSuretyData {
      *
      */
     function buy(address _passengerAccountNumber, uint8 _flightNumber, uint8 _insuranceAmount) external requireAuthorizedAppContracts payable {
+        require(_insuranceAmount <= 1, "Purchase limit is upto 1.");
+
         passengers[_passengerAccountNumber].passengerAccountAddress = _passengerAccountNumber;
         passengers[_passengerAccountNumber].flightNumber = _flightNumber;
         passengers[_passengerAccountNumber].purchasedInsuranceAmount = _insuranceAmount;

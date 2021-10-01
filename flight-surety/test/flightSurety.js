@@ -236,7 +236,7 @@ contract("Flight Surety Tests", async (accounts) => {
       "Passengers should be able to choose from a fixed list of flight numbers and departure"
     );
   });
-  it("Passengers may purchase flight insurance", async () => {
+  it("Passengers may purchase flight insurance upto 1", async () => {
     let insurancePurchased = true;
 
     try {
@@ -250,13 +250,14 @@ contract("Flight Surety Tests", async (accounts) => {
         from: accounts[8],
       });
     } catch (error) {
+      console.log(error);
       insurancePurchased = false;
     }
 
     assert.equal(
       insurancePurchased,
       true,
-      "Passengers may purchase flight insurance"
+      "Passengers may purchase flight insurance upto 1"
     );
   });
 });
