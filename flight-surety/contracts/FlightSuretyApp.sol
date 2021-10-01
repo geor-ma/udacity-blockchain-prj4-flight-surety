@@ -18,23 +18,8 @@ contract FlightSuretyApp {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
-    // Flight status codees
-    uint8 private constant STATUS_CODE_UNKNOWN = 0;
-    uint8 private constant STATUS_CODE_ON_TIME = 10;
-    uint8 private constant STATUS_CODE_LATE_AIRLINE = 20;
-    uint8 private constant STATUS_CODE_LATE_WEATHER = 30;
-    uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
-    uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
     address private contractOwner; // Account used to deploy contract
-
-    struct Flight {
-        bool isRegistered;
-        uint8 statusCode;
-        uint256 updatedTimestamp;
-        address airline;
-    }
-    mapping(bytes32 => Flight) private flights;
 
     FlightSuretyData flightSuretyData;
     
@@ -108,7 +93,13 @@ contract FlightSuretyApp {
      * @dev Register a future flight for insuring.
      *
      */
-    function registerFlight() external pure {}
+    function registerFlight(uint8 _flightNumber) external {
+        flightSuretyData.registerFlight(_flightNumber, msg.sender);
+    }
+
+    function getFlights() external view returns (uint8[] memory){
+        return flightSuretyData.getFlights();
+    }
 
     /**
      * @dev Called after oracle has updated flight status
@@ -312,4 +303,6 @@ contract FlightSuretyData {
     function isOperational() public view returns(bool);
     function registerAirline (address _addressAirline, address _nominatingAirline) external ;
     function approveAirlineRegistration(address _airlineToRegister, address _approvingAirline) external;
+    function registerFlight(uint8 _flightNumber, address _airlineAddress) external;
+    function getFlights() external view returns (uint8[] memory);
 }

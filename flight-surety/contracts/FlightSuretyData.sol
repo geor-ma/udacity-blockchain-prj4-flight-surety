@@ -26,6 +26,25 @@ contract FlightSuretyData {
     mapping(address => Airline) private airlines;
     uint airlinesCount = 0;
 
+    struct Flight {
+        bool isRegistered;
+        uint8 statusCode;
+        uint256 updatedTimestamp;
+        address airlineAddress;
+        uint8 flightNumber;
+    }
+    mapping(uint8 => Flight) private flights;
+    uint8[] private flightNumbers;
+
+    // Flight status codees
+    uint8 private constant STATUS_CODE_UNKNOWN = 0;
+    uint8 private constant STATUS_CODE_ON_TIME = 10;
+    uint8 private constant STATUS_CODE_LATE_AIRLINE = 20;
+    uint8 private constant STATUS_CODE_LATE_WEATHER = 30;
+    uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
+    uint8 private constant STATUS_CODE_LATE_OTHER = 50;
+
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -169,6 +188,20 @@ contract FlightSuretyData {
         }
     }
 
+    function registerFlight(uint8 _flightNumber, address _airlineAddress) external requireAuthorizedAppContracts{
+        require((airlines[_airlineAddress].airlineAddress == _airlineAddress) && (airlines[_airlineAddress].isRegistered == true), "Only a registered airline can register a flight.");
+
+        flights[_flightNumber].flightNumber = _flightNumber;
+        flights[_flightNumber].airlineAddress = _airlineAddress;
+        flights[_flightNumber].isRegistered = true;
+
+        flightNumbers.push(_flightNumber);
+
+    }
+
+    function getFlights() external view requireAuthorizedAppContracts returns (uint8[] memory) {
+        return flightNumbers;
+    }
 
     /**
      * @dev Buy insurance for a flight

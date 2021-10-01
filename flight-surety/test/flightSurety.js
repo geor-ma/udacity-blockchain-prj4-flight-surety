@@ -188,4 +188,52 @@ contract("Flight Surety Tests", async (accounts) => {
       "Airline should not be able to register another airline if it hasn't provided funding"
     );
   });
+
+  //
+  // Passengers
+  //
+  it("Passengers can choose from a fixed list of flight numbers and departure", async () => {
+    //add 3 flights
+    let flightsRegistered = true;
+
+    try {
+      await config.flightSuretyApp.registerFlight(100, {
+        from: config.firstAirline,
+      });
+
+      await config.flightSuretyApp.registerFlight(101, {
+        from: config.firstAirline,
+      });
+
+      await config.flightSuretyApp.registerFlight(102, {
+        from: config.firstAirline,
+      });
+    } catch (error) {
+      flightsRegistered = false;
+    }
+
+    assert.equal(
+      flightsRegistered,
+      true,
+      "registered airlines should be able to register/add flights."
+    );
+
+    // get flights list
+
+    let canGetFlights = true;
+    try {
+      let flights = await config.flightSuretyApp.getFlights();
+      //console.log("flights are ", flights);
+      canGetFlights = flights.length > 0;
+    } catch (e) {
+      console.log(e);
+      canGetFlights = false;
+    }
+
+    assert.equal(
+      canGetFlights,
+      true,
+      "Passengers should be able to choose from a fixed list of flight numbers and departure"
+    );
+  });
 });
