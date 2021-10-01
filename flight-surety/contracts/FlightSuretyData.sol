@@ -19,7 +19,8 @@ contract FlightSuretyData {
     struct Passenger {
         address passengerAccountAddress;
         uint8 flightNumber;
-        uint8 purchasedInsuranceAmount;
+        uint purchasedInsuranceAmount;
+        uint creditedInsuranceAmount; // insurance credit when flight is delayed
     }
 
     mapping(address => Passenger) private passengers;
@@ -215,18 +216,27 @@ contract FlightSuretyData {
      * @dev Buy insurance for a flight
      *
      */
-    function buy(address _passengerAccountNumber, uint8 _flightNumber, uint8 _insuranceAmount) external requireAuthorizedAppContracts payable {
+    function buy(address _passengerAccountNumber, uint8 _flightNumber, uint _insuranceAmount) external requireAuthorizedAppContracts payable {
         require(_insuranceAmount <= 1, "Purchase limit is upto 1.");
 
         passengers[_passengerAccountNumber].passengerAccountAddress = _passengerAccountNumber;
         passengers[_passengerAccountNumber].flightNumber = _flightNumber;
         passengers[_passengerAccountNumber].purchasedInsuranceAmount = _insuranceAmount;
+        passengers[_passengerAccountNumber].creditedInsuranceAmount = 0;
     }
 
     /**
      *  @dev Credits payouts to insurees
      */
-    function creditInsurees() external pure {}
+    // function creditInsurees() external pure {
+    //     uint x = uint(1) * uint(1.5);
+    // }
+
+    function creditInsurees(address _passengerAccountNumber) external requireAuthorizedAppContracts {
+        //set the credit amount to 1.5 times of purchased insurance amount
+        uint insuranceAmount = passengers[_passengerAccountNumber].purchasedInsuranceAmount.mul(uint(150)).div(uint(100));
+        passengers[_passengerAccountNumber].creditedInsuranceAmount = insuranceAmount;
+    }
 
     /**
      *  @dev Transfers eligible payout funds to insuree

@@ -260,4 +260,33 @@ contract("Flight Surety Tests", async (accounts) => {
       "Passengers may purchase flight insurance upto 1"
     );
   });
+  it("If flight delayed passenger receives 1.5X amount they paid", async () => {
+    let insuranceAmountCredited = true;
+
+    try {
+      //register a flight
+      await config.flightSuretyApp.registerFlight(100, {
+        from: config.firstAirline,
+      });
+
+      // purchase insurance for the flight registered above
+      await config.flightSuretyApp.buy(100, 1, {
+        from: accounts[8],
+      });
+
+      // credit insurance amount when flight is delayed.
+      await config.flightSuretyApp.creditInsurees({
+        from: accounts[8],
+      });
+    } catch (error) {
+      console.log(error);
+      insuranceAmountCredited = false;
+    }
+
+    assert.equal(
+      insuranceAmountCredited,
+      true,
+      "If flight delayed passenger receives 1.5X amount they paid"
+    );
+  });
 });
