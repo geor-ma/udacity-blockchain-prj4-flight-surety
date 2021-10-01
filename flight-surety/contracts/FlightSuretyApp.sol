@@ -96,10 +96,12 @@ contract FlightSuretyApp {
      */
     function registerAirline(address _newAirlineAddress)
         external
-        returns (bool success)
     {
         flightSuretyData.registerAirline(_newAirlineAddress, msg.sender);
-        return true;
+    }
+
+    function approveAirlineRegistration(address _airlineToRegister) external{
+        flightSuretyData.approveAirlineRegistration(_airlineToRegister, msg.sender);
     }
 
     /**
@@ -309,4 +311,5 @@ contract FlightSuretyApp {
 contract FlightSuretyData {
     function isOperational() public view returns(bool);
     function registerAirline (address _addressAirline, address _nominatingAirline) external ;
+    function approveAirlineRegistration(address _airlineToRegister, address _approvingAirline) external;
 }

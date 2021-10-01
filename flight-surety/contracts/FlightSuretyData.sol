@@ -19,6 +19,8 @@ contract FlightSuretyData {
     struct Airline {   
         address airlineAddress;
         bool isFunded;
+        bool isRegistered; //set to true when all conditions to register meets
+        uint approvalVotes; // number of approval votes by existing airlines for this airline. used when no. of airlines is > 4
     }
 
     mapping(address => Airline) private airlines;
@@ -93,7 +95,7 @@ contract FlightSuretyData {
                 canRegister = true;
             }
         }
-        else{
+        else{ 
             canRegister = true;
         }
 
@@ -144,15 +146,28 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline(address _airlineAddress, address _nominatingAirline) external requireAuthorizedAppContracts requireCanRegisterAirline(_nominatingAirline) {
-        _registerAirline(_airlineAddress);
+    function registerAirline(address _airlineToRegister, address _nominatingAirline) external requireAuthorizedAppContracts requireCanRegisterAirline(_nominatingAirline) {
+        _registerAirline(_airlineToRegister);
     }
 
-    function _registerAirline(address _airlineAddress) internal {
+    function _registerAirline(address _airlineToRegister) internal {
         airlinesCount = airlinesCount.add(1);
-        airlines[_airlineAddress].airlineAddress = _airlineAddress;
-        airlines[_airlineAddress].isFunded = false;
+        airlines[_airlineToRegister].airlineAddress = _airlineToRegister;
+        airlines[_airlineToRegister].isFunded = false;
+        airlines[_airlineToRegister].approvalVotes = 1; //default to 1 as it is safe to consider the nominating airline has approved
+        if( airlinesCount < 5){
+            airlines[_airlineToRegister].isRegistered = true;
+        }
     }
+
+    function approveAirlineRegistration(address _airlineToRegister, address _approvingAirline) external requireAuthorizedAppContracts{
+        require((airlines[_approvingAirline].airlineAddress == _approvingAirline) && (airlines[_approvingAirline].isRegistered == true), "Caller cannot register new airline.");
+        airlines[_airlineToRegister].approvalVotes = airlines[_airlineToRegister].approvalVotes + 1; 
+        if(airlines[_airlineToRegister].approvalVotes >= 2){
+            airlines[_airlineToRegister].isRegistered = true;
+        }
+    }
+
 
     /**
      * @dev Buy insurance for a flight
